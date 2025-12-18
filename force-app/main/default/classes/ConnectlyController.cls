@@ -34,7 +34,7 @@ public class ConnectlyController {
     public static string makecallout_for_caliing(String Phone){
         String sid='';
         HttpRequest req = new HttpRequest();
-        String endpoint = 'https://api.twilio.com/2010-04-01/Accounts/AC3d3c6061772133bfef7ad253bbea39a8/Calls.json';
+        String endpoint = Label.TwilioUrl;
         req.setEndpoint(endpoint);
         req.setMethod('POST');
         req.setHeader('Content-Type','application/x-www-form-urlencoded');
