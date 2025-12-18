@@ -38,8 +38,8 @@ public class ConnectlyController {
         req.setEndpoint(endpoint);
         req.setMethod('POST');
         req.setHeader('Content-Type','application/x-www-form-urlencoded');
-        string username='AC3d3c6061772133bfef7ad253bbea39a8';
-        String password = 'd039ce0f91251863b4cf86d3a7c5a984';
+        string username=Label.Twilio_Username;
+        String password = Label.Twilio_Password;
 		Blob headerValue = Blob.valueOf(username + ':' + password);
 		String authorizationHeader = 'BASIC ' + EncodingUtil.base64Encode(headerValue);
 		req.setHeader('Authorization', authorizationHeader);
