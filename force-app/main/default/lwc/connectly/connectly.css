@@ -1,0 +1,59 @@
+.my_icons{
+    height: 50px;
+    width: 50px;
+}
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background-color: rgba(255, 255, 255, 0.8); /* semi-transparent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader img {
+    width: 100px; /* adjust to your gif size */
+    height: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.textarea{
+    height: 400px;
+    width: auto;
+}
+.slds-docked_container{
+    position: fixed;
+    z-index: 1050;
+}
+.whatsappIcon{
+    height: 60px;
+     width: auto;
+}
+.fixed-body-height{
+    height: 350px;
+}
+.footer-height{
+    height: 180px;
+}
+.chat-footer{
+    height: 200px;
+}
+.display-inline{
+ display: inline-block;
+}
+.shift-to-right-corner{
+    float: right;
+}
+.send-button{
+    padding-top: 2px;
+    margin-top: 2px;
+    height: 58px;
+    width: 37px;
+}

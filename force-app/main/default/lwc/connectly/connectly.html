@@ -1,0 +1,793 @@
+<template>
+  <div class="backdrop" if:true={showLoading}>
+    <div class="loader">
+      <img src={loadingGif} alt="Loading..." />
+    </div>
+  </div>
+  <!-- Container with SLDS card styling -->
+  <div class="slds-card slds-p-around_medium" id="connectly-container">
+
+    <!-- Title -->
+    <div class="slds-m-bottom_large slds-grid">
+      <div class="slds-col slds-size_1-of-12">
+
+      </div>
+      <div class="slds-col slds-size_10-of-12" id="connectly-title">
+        <div class="slds-text-heading_large slds-align_absolute-center">
+          <strong>Communication Hub</strong>
+        </div>
+
+      </div>
+      <!--more menu-->
+      <div class="slds-col slds-size_1-of-12">
+        <div class="slds-float_right">
+          <div class={more_Menu}>
+            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-haspopup="true"
+              aria-expanded="true" title="Show More" onclick={onMenuClick}>
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+              </svg>
+              <span class="slds-assistive-text">Show More</span>
+            </button>
+            <div class="slds-dropdown slds-dropdown_right">
+              <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="0">
+                    <span class="slds-truncate" title="Menu Item One" onclick={openActivityTimeline}>Activity Timeline</span>
+                  </a>
+                </li>
+                <li class="slds-dropdown__item" role="presentation">
+                  <a href="#" role="menuitem" tabindex="-1">
+                    <span class="slds-truncate" title="Menu Item Two">Settings</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button Group -->
+    <div class="slds-m-bottom_small slds-m-right_xx-large">
+      <div class="slds-grid slds-gutters slds-align_absolute-center" id="connectly-buttons">
+
+        <!-- Call Button -->
+        <div class="slds-col">
+          <div class="slds-align_absolute-center">
+            <a href="#">
+              <lightning-icon icon-name="action:call" alternative-text="Call" title="Call" size="medium"
+                onclick={onbuttonClick} name="call"></lightning-icon>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Email Button -->
+        <div class="slds-col">
+          <div class="slds-align_absolute-center">
+            <a href="#">
+              <lightning-icon icon-name="action:email" alternative-text="Email" title="Email" size="medium"
+                onclick={onbuttonClick} name="email"></lightning-icon>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Message Button -->
+        <div class="slds-col">
+          <div class="slds-align_absolute-center">
+            <a href="#">
+              <lightning-icon icon-name="action:share_post" alternative-text="Chat" title="Chat" size="medium"
+                onclick={onbuttonClick} name="chat"></lightning-icon>
+            </a>
+          </div>
+
+        </div>
+        <!--Whatsapp button-->
+        <div class="slds-col">
+          <div class="slds-align_absolute-center">
+            <a href="#">
+              <!--this whatsapp feature has not been developed yet-->
+              <!-- <lightning-icon src={whatsapp_logo} title="whatsapp" name="whatsapp" 
+              alternative-text="whatsapp icon" size="medium"></lightning-icon> -->
+              <img src={whatsapp_logo} alt="whatsapp" class="slds-size_small whatsappIcon" onclick={onWhatsappClick} />
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- modal start -->
+  <template lwc:if={composer.isVisible}>
+    <div class="slds-docked_container">
+      <section class={composerClass} role="dialog" aria-labelledby="dialog-heading-id-1"
+        aria-describedby="dialog-content-id-1">
+        <!-- header start -->
+        <header class="slds-docked-composer__header slds-grid slds-shrink-none" aria-live="assertive">
+          <div class="slds-media slds-media_center slds-no-space">
+            <div class="slds-media__figure slds-m-right_x-small">
+              <span class="slds-icon_container">
+                <lightning-icon icon-name={headerIconName} alternative-text="headerIcon" title="headerIcon"
+                  size="x-small">
+                </lightning-icon>
+              </span>
+            </div>
+            <div class="slds-media__body">
+              <h2 class="slds-truncate" id="dialog-heading-id-1" title="headerTitle">{headerTitle}</h2>
+            </div>
+          </div>
+          <div class="slds-col_bump-left slds-shrink-none">
+            <button class="slds-button slds-button_icon slds-m-right_large" title="einstein">
+              <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#sparkles"></use>
+              </svg>
+            </button>
+            <button class="slds-button slds-button_icon slds-button_icon" title="Minimize window">
+              <!-- <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#minimize_window"></use>
+              </svg> -->
+              <lightning-icon icon-name="utility:minimize_window" alternative-text="minimize" title="minimize"
+                size="x-small" onclick={onHeaderButtonClick} name="minimize">
+              </lightning-icon>
+              <!-- <span class="slds-assistive-text">Minimize Composer Panel</span> -->
+            </button>
+            <button class="slds-button slds-button_icon slds-button_icon" title="Expand Composer">
+              <!-- <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#expand_alt"></use>
+              </svg>
+              <span class="slds-assistive-text">Expand Composer Panel</span> -->
+              <lightning-icon icon-name="utility:expand_alt" alternative-text="expand" title="expand" size="x-small"
+                onclick={onHeaderButtonClick} name="expand">
+              </lightning-icon>
+            </button>
+            <button class="slds-button slds-button_icon slds-button_icon" title="Close">
+              <!-- <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+              </svg>
+              <span class="slds-assistive-text">Close Composer Panel</span> -->
+              <lightning-icon icon-name="utility:close" alternative-text="close" title="close" size="x-small"
+                onclick={onHeaderButtonClick} name="close"></lightning-icon>
+            </button>
+          </div>
+        </header>
+        <!-- header end -->
+        <!-- body start -->
+        <!-- Email start -->
+        <template lwc:if={channelManagement.email}>
+          <div class="slds-docked-composer__body" id="dialog-content-id-1">
+            <div class="slds-email-composer">
+              <div class="slds-form-element slds-email-composer__combobox">
+                <label class="slds-form-element__label" for="recipients-to">To</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-combobox_container slds-has-inline-listbox">
+                    <ul class="slds-listbox slds-listbox_horizontal" aria-label="Selected Options:">
+                      <li class="slds-listbox-item">
+                        <span class="slds-pill">
+                          <span class="slds-avatar slds-avatar_x-small slds-pill__icon_container">
+                            <img alt="Person name" src="https://v1.lightningdesignsystem.com/assets/images/avatar2.jpg"
+                              title="User avatar" />
+                          </span>
+                          <span class="slds-pill__label" title="jrogers@cloudhub.com">jrogers@cloudhub.com</span>
+                          <span class="slds-icon_container slds-pill__remove" title="Remove">
+                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove"
+                              title="Remove">
+                              <svg class="slds-button__icon" aria-hidden="true">
+                                <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#close"></use>
+                              </svg>
+                              <span class="slds-assistive-text">Remove</span>
+                            </button>
+                          </span>
+                        </span>
+                      </li>
+                    </ul>
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                      <div class="slds-combobox__form-element" role="none">
+                        <input type="text" class="slds-input slds-combobox__input" id="recipients-to"
+                          aria-autocomplete="list" aria-controls="listbox-unique-id-03" autocomplete="off"
+                          role="combobox" aria-expanded="false" aria-haspopup="listbox" placeholder=" " />
+                      </div>
+                      <div id="listbox-id-01" role="listbox" class="slds-dropdown slds-dropdown_fluid"
+                        aria-label={Options}>
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                          <li role="presentation" class="slds-listbox__item">
+                            <div id="listbox-option-id-1"
+                              class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                              role="option">
+                              <span class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-account">
+                                  <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/_slds/icons/standard-sprite/svg/symbols.svg#account"></use>
+                                  </svg>
+                                </span>
+                              </span>
+                              <span class="slds-media__body">
+                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">Acme</span>
+                                <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • San
+                                  Francisco</span>
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-form-element slds-email-composer__combobox">
+                <label class="slds-form-element__label" for="recipients-bcc">Bcc</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-combobox_container slds-has-inline-listbox">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                      <div class="slds-combobox__form-element" role="none">
+                        <input type="text" class="slds-input slds-combobox__input" id="recipients-bcc"
+                          aria-autocomplete="list" aria-controls="listbox-unique-id-03" autocomplete="off"
+                          role="combobox" aria-expanded="false" aria-haspopup="listbox" placeholder=" " />
+                      </div>
+                      <div id="listbox-id-02" role="listbox" class="slds-dropdown slds-dropdown_fluid"
+                        aria-label={Options}>
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                          <li role="presentation" class="slds-listbox__item">
+                            <div id="listbox-option-id-2"
+                              class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                              role="option">
+                              <span class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-account">
+                                  <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/_slds/icons/standard-sprite/svg/symbols.svg#account"></use>
+                                  </svg>
+                                </span>
+                              </span>
+                              <span class="slds-media__body">
+                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">Acme</span>
+                                <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • San
+                                  Francisco</span>
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-form-element slds-email-composer__combobox">
+                <label class="slds-form-element__label" for="recipients-cc">Cc</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-combobox_container slds-has-inline-listbox">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                      <div class="slds-combobox__form-element" role="none">
+                        <input type="text" class="slds-input slds-combobox__input" id="recipients-cc"
+                          aria-autocomplete="list" aria-controls="listbox-unique-id-03" autocomplete="off"
+                          role="combobox" aria-expanded="false" aria-haspopup="listbox" placeholder=" " />
+                      </div>
+                      <div id="listbox-id-03" role="listbox" class="slds-dropdown slds-dropdown_fluid"
+                        aria-label={Options}>
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                          <li role="presentation" class="slds-listbox__item">
+                            <div id="listbox-option-id-3"
+                              class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                              role="option">
+                              <span class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-account">
+                                  <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/_slds/icons/standard-sprite/svg/symbols.svg#account"></use>
+                                  </svg>
+                                </span>
+                              </span>
+                              <span class="slds-media__body">
+                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">Acme</span>
+                                <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • San
+                                  Francisco</span>
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label slds-assistive-text" for="input-subject-01">Enter subject</label>
+                <div class="slds-form-element__control">
+                  <input type="text" id="input-subject-01" class="slds-input slds-input_bare"
+                    placeholder="Enter Subject" />
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <div class="slds-form-element__control">
+                  <div class="slds-rich-text-editor slds-grid slds-grid_vertical slds-nowrap">
+                    <div role="toolbar" class="slds-rich-text-editor__toolbar slds-shrink-none">
+                      <div class="slds-grid slds-rich-text-editor__spacing-wrapper" role="group"
+                        aria-label="Format font family &amp; size">
+                        <div class="slds-rich-text-editor__select">
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-assistive-text" for="example-unique-id-13"
+                              id="combobox-label-id-7">Choose a Font</label>
+                            <div class="slds-form-element__control">
+                              <div class="slds-combobox_container">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                                  <div
+                                    class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right slds-rich-text-editor__select_x-small"
+                                    role="none">
+                                    <div role="combobox" tabindex="0"
+                                      class="slds-input_faux slds-combobox__input slds-combobox__input-value"
+                                      aria-labelledby="combobox-label-id-7" id="example-unique-id-13-selected-value"
+                                      aria-controls="example-unique-id-14" aria-expanded="false"
+                                      aria-haspopup="listbox">
+                                      <span class="slds-truncate" id="combobox-value-id-7">Font</span>
+                                    </div>
+                                    <span
+                                      class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                      <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default"
+                                        aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div id="example-unique-id-14"
+                                    class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid slds-dropdown_left"
+                                    role="listbox" aria-label={Options} tabindex="0" aria-busy="false">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option28"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Arial">Arial</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option29"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Georgia">Georgia</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option30"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="Times New Roman">Times New Roman</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="slds-rich-text-editor__select">
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-assistive-text" for="example-unique-id-15"
+                              id="combobox-label-id-8">Choose a Font Size</label>
+                            <div class="slds-form-element__control">
+                              <div class="slds-combobox_container">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                                  <div
+                                    class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right slds-rich-text-editor__select_xx-small"
+                                    role="none">
+                                    <div role="combobox" tabindex="0"
+                                      class="slds-input_faux slds-combobox__input slds-combobox__input-value"
+                                      aria-labelledby="combobox-label-id-8" id="example-unique-id-15-selected-value"
+                                      aria-controls="example-unique-id-16" aria-expanded="false"
+                                      aria-haspopup="listbox">
+                                      <span class="slds-truncate" id="combobox-value-id-8">Size</span>
+                                    </div>
+                                    <span
+                                      class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                                      <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default"
+                                        aria-hidden="true">
+                                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  <div id="example-unique-id-16"
+                                    class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid slds-dropdown_left"
+                                    role="listbox" aria-label={Options} tabindex="0" aria-busy="false">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option31"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="8px">8px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option32"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="10px">10px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option33"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="12px">12px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option34"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="14px">14px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option35"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="16px">16px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                      <li role="presentation" class="slds-listbox__item">
+                                        <div id="option36"
+                                          class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                          role="option">
+                                          <span class="slds-media__body">
+                                            <span class="slds-truncate" title="24px">24px</span>
+                                          </span>
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <ul aria-label="Format text" class="slds-button-group-list">
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#bold"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Bold</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#italic"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Italic</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#underline"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Underline</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#strikethrough"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Strike Through</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <ul aria-label="Format background &amp; text color" class="slds-button-group-list">
+                        <li>
+                          <button tabindex="-1"
+                            class="slds-button slds-button_icon slds-button_icon-more slds-button_icon-more-filled"
+                            aria-haspopup="true">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#text_background_color">
+                              </use>
+                            </svg>
+                            <svg class="slds-button__icon slds-button__icon_x-small" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Background Color</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button tabindex="-1"
+                            class="slds-button slds-button_icon slds-button_icon-more slds-button_icon-more-filled"
+                            aria-haspopup="true">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#text_color"></use>
+                            </svg>
+                            <svg class="slds-button__icon slds-button__icon_x-small" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#down"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Text Color</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <ul aria-label="Format body" class="slds-button-group-list">
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#richtextbulletedlist"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Bulleted List</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#richtextnumberedlist"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Numbered List</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#richtextindent"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Indent</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#richtextoutdent"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Outdent</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <ul aria-label="Align text" class="slds-button-group-list">
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#left_align_text"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Left Align Text</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#center_align_text"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Center Align Text</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#right_align_text"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Right Align Text</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <ul aria-label="Insert content" class="slds-button-group-list">
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#emoji"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Add Emoji</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#image"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Add Image</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#link"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Add Link</span>
+                          </button>
+                        </li>
+                      </ul>
+                      <ul aria-label="Remove Formatting" class="slds-button-group-list">
+                        <li>
+                          <button class="slds-button slds-button_icon slds-button_icon-border-filled" tabindex="-1">
+                            <svg class="slds-button__icon" aria-hidden="true">
+                              <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#remove_formatting"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Remove Formatting</span>
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="slds-rich-text-editor__textarea slds-grid">
+                      <div aria-label="Compose text" contenteditable="true"
+                        class="slds-rich-text-area__content slds-text-color_weak slds-grow">Compose Email...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slds-docked-composer__footer slds-shrink-none">
+            <div class="slds-col_bump-left slds-grid slds-grid_vertical-align-center">
+              <div class="slds-grid slds-m-right_small" role="toolbar">
+                <ul class="slds-grid" aria-label="Insert content">
+                  <li>
+                    <button class="slds-button slds-button_icon slds-button_icon-small" title="Attach File">
+                      <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#link"></use>
+                      </svg>
+                      <span class="slds-assistive-text">Attach File</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="slds-button slds-button_icon slds-button_icon-small" title="Insert Template"
+                      tabindex="-1">
+                      <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#insert_template"></use>
+                      </svg>
+                      <span class="slds-assistive-text">Insert Template</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="slds-button slds-button_icon slds-button_icon-small" title="Insert HTML"
+                      tabindex="-1">
+                      <svg class="slds-button__icon" aria-hidden="true">
+                        <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#insert_tag_field"></use>
+                      </svg>
+                      <span class="slds-assistive-text">Insert HTML</span>
+                    </button>
+                  </li>
+                </ul>
+                <button class="slds-button slds-button_icon slds-button_icon-small" title="Preview" tabindex="-1">
+                  <svg class="slds-button__icon" aria-hidden="true">
+                    <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#preview"></use>
+                  </svg>
+                  <span class="slds-assistive-text">Preview</span>
+                </button>
+              </div>
+              <button class="slds-button slds-button_brand">Send</button>
+            </div>
+          </footer>
+        </template>
+        <!-- Email end -->
+        <!-- Call Start -->
+        <template lwc:elseif={channelManagement.call}>
+          <div class="slds-docked-composer__body slds-align_absolute-center" id="dialog-content-id-2">
+            <div class="slds-text-align_center slds-align-middle">
+              <span class="slds-avatar slds-avatar_large">
+                <img alt="" src="https://v1.lightningdesignsystem.com/assets/images/avatar2.jpg"
+                  title="Lei Chan avatar" />
+              </span>
+              <h3 class="slds-text-heading_large">{name}</h3>
+              <ul class="slds-list_horizontal slds-has-dividers_right slds-text-body_small">
+                <li class="slds-item">{title}</li>
+                <li class="slds-item ">{company}</li>
+              </ul>
+              <template lwc:if={isCallConfirmed}>
+                <div class="slds-m-top_medium">
+                  <lightning-dynamic-icon type="ellie" alternative-text="Ellie intelligence" class="display-inline">
+                  </lightning-dynamic-icon>
+                  <p class="slds-text-heading_medium slds-m-left_small display-inline">Connecting...</p>
+                </div>
+              </template>
+              <template lwc:else>
+                <div class="slds-m-top_medium">
+                  <lightning-button variant="brand" label=" Call " title="Primary action" onclick={confirmingCall}
+                    class="slds-m-left_x-small"></lightning-button>
+                  <lightning-button label="Cancel" title="Non-primary action" onclick={onHeaderButtonClick}
+                    class="slds-m-left_x-small" name="close"></lightning-button>
+                </div>
+              </template>
+            </div>
+          </div>
+          <footer class="slds-docked-composer__footer slds-shrink-none">
+            <button class="slds-button slds-button_destructive slds-size_1-of-1">End Call</button>
+          </footer>
+        </template>
+        <!-- Call end -->
+        <!-- Chat Start -->
+        <template lwc:elseif={channelManagement.chat}>
+          <div class="slds-docked-composer__body slds-scrollable_y scroll-container fixed-body-height"
+            id="dialog-content-id-3">
+            <!-- <section role="log" class="slds-chat"> -->
+            <div class="slds-chat">
+              <ul class="slds-chat-list" role="log">
+                <template for:each={chat_records} for:item="item">
+                  <div key={item.Id}>
+                    <li class={item.class_li}>
+                      <div class="slds-chat-message">
+                        <div class="slds-chat-message__body">
+                          <div class={item.class_div}>
+                            <span>{item.content}</span>
+                          </div>
+                          <div class="slds-chat-message__meta" aria-label="said Amber Cann at 5:23 PM">D •
+                            {item.DateTime}</div>
+                        </div>
+                      </div>
+                    </li>
+                  </div>
+                </template>
+              </ul>
+              <!-- </section> -->
+            </div>
+          </div>
+          <!-- <div class="slds-docked-composer__footer slds-shrink-none"></div> -->
+          <div class="footer-height slds-m-left_x-small slds-m-right_x-small slds-m-bottom_small">
+            <div class="slds-grid">
+              <div class="slds-col slds-size_11-of-12">
+                <lightning-textarea id="text-input-id-126" placeholder="Type message…" onchange={handleMessageChange}
+                  value={message}></lightning-textarea>
+              </div>
+              <div class="slds-col slds-size_1-of-12 slds-grid slds-wrap slds-m-top_medium">
+                <div class="slds-col slds-size_1-of-1">
+                  <button class="slds-button slds-button_icon slds-button_icon-brand send-button slds-m-left_xx-small" 
+                  onclick={handleSend} title="Send Message">
+                    <svg class="slds-button__icon slds-button__icon_small" aria-hidden="true">
+                      <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#send"></use>
+                    </svg></button>
+                </div>
+                <!-- <div class="slds-col slds-size_1-of-1">
+                  <button class="slds-button slds-button_neutral">
+                    <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                      <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#einstein"></use>
+                    </svg>GenAI</button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- <footer class="slds-docked-composer__footer slds-shrink-none chat-footer">
+            <div class="slds-form-element slds-size_1-of-1">
+              <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                  aria-hidden="true">
+                  <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#send"></use>
+                </svg>
+                <textarea id="text-input-id-126" placeholder="Placeholder text…" class="slds-textarea"
+                  onchange={handleMessageChange} onkeypress={handleEnter}>{message}</textarea>
+              </div>
+            </div>
+          </footer> -->
+        </template>
+        <!-- Chat end -->
+
+
+      </section>
+    </div>
+  </template>
+  <!-- modal end -->
+  <!-- Side Panel start -->
+  <div class={panelClass}>
+    <div class="slds-panel__header">
+      <h2 class="slds-panel__header-title slds-text-heading_small slds-truncate" title="Panel Header">Activity Timeline</h2>
+      <div class="slds-panel__header-actions">
+        <button class="slds-button slds-button_icon slds-button_icon-small slds-panel__close"
+          title="Collapse Panel Header" onclick={closePanel}>
+          <svg class="slds-button__icon" aria-hidden="true">
+            <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
+          <span class="slds-assistive-text">Collapse Panel Header</span>
+        </button>
+      </div>
+    </div>
+    <div class="slds-panel__body">A panel body accepts any layout or component</div>
+  </div>
+</template>
