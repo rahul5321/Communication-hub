@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Page_Url</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Visualforce Page Url</shortDescription>
+        <value>https://exl6-dev-ed--c.vf.force.com/apex/</value>
+    </labels>
+    <labels>
+        <fullName>TwilioUrl</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>TwilioUrl</shortDescription>
+        <value>https://api.twilio.com/2010-04-01/Accounts/AC3d3c6061772133bfef7ad253bbea39a8/Calls.json</value>
+    </labels>
+    <labels>
+        <fullName>Twilio_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Twilio_Password</shortDescription>
+        <value>d039ce0f91251863b4cf86d3a7c5a984</value>
+    </labels>
+    <labels>
+        <fullName>Twilio_Username</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Twilio_Username</shortDescription>
+        <value>AC3d3c6061772133bfef7ad253bbea39a8</value>
+    </labels>
+    <labels>
+        <fullName>Unassigned_Leads_QueueId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unassigned Leads Queue Id</shortDescription>
+        <value>00GJ1000000J0tf</value>
+    </labels>
+    <labels>
+        <fullName>url_touse</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>url_touse</shortDescription>
+        <value>//exl6-dev-ed.lightning.force.com/lightning/r/Account/0015g00000JgLg4AAF/view</value>
+    </labels>
+</CustomLabels>
