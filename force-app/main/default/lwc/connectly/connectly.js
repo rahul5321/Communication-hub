@@ -1,6 +1,7 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import loading_img3 from '@salesforce/resourceUrl/loading_img3';
 import whatsapplogo from '@salesforce/resourceUrl/whatsapp';
+import whatsappbackground from '@salesforce/resourceUrl/whatsappbackground';
 import whatsappSVG from '@salesforce/resourceUrl/whatsappSVG';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import TITLE from '@salesforce/schema/Lead.Title';
@@ -10,6 +11,7 @@ import PHONE from '@salesforce/schema/Lead.Phone';
 import EMAIL from '@salesforce/schema/Lead.Email';
 import get_details from '@salesforce/apex/ConnectlyController.get_details';
 import connect from '@salesforce/apex/ConnectlyController.connect';
+import rephrase from '@salesforce/apex/ConnectlyController.rephrase';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
@@ -19,6 +21,7 @@ export default class Connectly extends LightningElement {
     loadingGif = loading_img3;
     whatsapp_logo = whatsapplogo;
     whatsapp_SVG = whatsappSVG;
+    whatsappbackground=whatsappbackground;
     @track composer = { isVisible: false, isOpen: true };
     @wire(getRecord, { recordId: '$recordId', fields: [TITLE, COMPANY, NAME, PHONE, EMAIL] })
     lead;
@@ -26,6 +29,14 @@ export default class Connectly extends LightningElement {
     communications;
 
     @track chat_records = [];
+    @track whatsapp_records = [];
+
+    @track records = {
+        chat : [],
+        whatsapp : []
+    }
+
+    @track channelManagement = { call: false, email: false, chat: false, whatsapp: false };
 
     channelName = '/event/Chat_Update_Event__e';
     subscription = {};
@@ -39,6 +50,8 @@ export default class Connectly extends LightningElement {
         }
         else if (this.channelManagement.chat) {
             return 'utility:slack_thread';
+        }else if (this.channelManagement.whatsapp) {
+            return 'standard:whatsapp';
         }
     }
     get headerTitle() {
@@ -50,11 +63,10 @@ export default class Connectly extends LightningElement {
         }
         else if (this.channelManagement.chat) {
             return 'Lets Chat';
+        }else if (this.channelManagement.whatsapp) {
+            return 'Whatsapp';
         }
     }
-
-    @track channelManagement = { call: false, email: false, chat: false };
-
     changeChannel(channel) {
         for (const key in this.channelManagement) {
             if (key === channel) {
@@ -76,21 +88,45 @@ export default class Connectly extends LightningElement {
     async get_details(channel) {
         try {
             this.communications = await get_details({ channel: channel, sourceId: this.recordId });
+
+            //const today = new Date();
+            let datecounter;
+            
             this.communications.forEach(element => {
                 console.log('element Name: ' + element.Name);
-                const obj = {
+                let time = '';
+                if (element.CreatedDate) {
+                    //const jsdate = new Date(element.CreatedDate);
+                    const datestr = this.getDateString(element.CreatedDate);
+                    console.log(this.process_dates(datestr));
+                    time = this.getTimeString(element.CreatedDate);
+                    
+                    if(datestr!=datecounter || (!datecounter)){
+                        datecounter=datestr;
+
+                        this.records[channel].push({
+                            id: datestr,
+                            content: this.process_dates(datestr),
+                            DateTime: element.CreatedDate,
+                            class_li: 'slds-chat-listitem slds-chat-listitem_event',
+                            isEvent: true
+                        })
+                        
+                    }
+                }
+                this.records[channel].push({
                     id: element.Id,
                     content: element.Content__c,
-                    DateTime: element.CreatedDate,
+                    DateTime: time,
                     class_li: element.Is_Inbound__c ? 'slds-chat-listitem slds-chat-listitem_inbound' : 'slds-chat-listitem slds-chat-listitem_outbound',
-                    class_div: element.Is_Inbound__c ? 'slds-chat-message__text slds-chat-message__text_inbound' : 'slds-chat-message__text slds-chat-message__text_outbound'
-                }
-
-                this.chat_records.push(obj);
+                    class_div: element.Is_Inbound__c ? 'slds-chat-message__text slds-chat-message__text_inbound' : 'slds-chat-message__text slds-chat-message__text_outbound',
+                    isEvent: false
+                });
+                
             });
             //console.log('data fetched: '+datafetched);
             console.log('data added: ' + this.communications);
-            console.log('chat_records: ' + this.chat_records);
+            console.log('chat_records: ' + JSON.stringify(this.records));
         } catch (error) {
             console.log('error fetching details');
             console.error('error: ' + error);
@@ -109,10 +145,37 @@ export default class Connectly extends LightningElement {
         this.hideloading();
     }
 
+    process_dates(dt) {
+        const todayDate = new Date();
+        console.log('today=' + todayDate.toLocaleDateString() + ' dt=' + dt);
+        if (dt == new Date().toLocaleDateString()) {
+            console.log('returning today');
+            return 'Today';
+        }
+        else if (dt == new Date(todayDate.setDate(todayDate.getDate() - 1)).toLocaleDateString()) {
+            console.log('returning yesterday');
+            return 'Yesterday';
+        }
+        else {
+            console.log('returning the date itself');
+            return dt;
+        }
+    }
+
+    getDateString(date_){
+        const jsdate = new Date(date_);
+        return jsdate.toLocaleDateString();
+    }
+    getTimeString(date_){
+        const jsdate = new Date(date_);
+        return jsdate.toLocaleTimeString();
+    }
+
     fetcha_details(channel) {
         console.log('data present: ' + this.communications);
+        console.log('record length:'+this.records[channel].length)
         //If we did not fetched the data
-        if (!this.communications) {
+        if (this.records[channel].length==0) {
             console.log('fetch data');
             //first display the loading text
             this.displayloading();
@@ -130,9 +193,9 @@ export default class Connectly extends LightningElement {
     onbuttonClick(event) {
         console.log('channel:' + event.target.name);
         const name = event.target.name;
-        if (name === 'chat') {
+        if (name === 'chat' || name === 'whatsapp') {
             this.fetcha_details(event.target.name);
-            console.log(this.chat_records);
+            //console.log(this.chat_records);
         } else {
             this.changeChannel(event.target.name);
 
@@ -150,6 +213,7 @@ export default class Connectly extends LightningElement {
         }
     }
     connectedCallback() {
+        console.log('11:58');
         console.log('composerclass:' + this.composerClass);
         console.log('Lead data:' + JSON.stringify(this.lead));
     }
@@ -200,6 +264,19 @@ export default class Connectly extends LightningElement {
         return getFieldValue(this.lead.data, NAME);
     }
 
+    IsTodayEventAvailable(channel){
+        let arr = this.records[channel];
+        for(let i= arr.length-1; i>=0 ; i--){
+            if(arr[i].isEvent){
+                if(arr[i].content==='Today'){
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
     //Platform Event
     subscribeChatEvent() {
         console.log('subscribing emp api: ' + this.channelName);
@@ -210,14 +287,27 @@ export default class Connectly extends LightningElement {
             const payload = response.data.payload;
             console.log('payload: ' + JSON.stringify(payload));
             if (payload.SessionId__c == this.recordId) {
-                this.chat_records = [
-                    ...this.chat_records,
+                if(this.IsTodayEventAvailable(chnl)){
+                    this.records[payload.Channel__c] = [
+                        ...this.records[payload.Channel__c],
+                        {
+                            id: this.getDateString(new Date()),
+                            content: 'Today',
+                            DateTime: this.getTimeString(payload.CreatedDate),
+                            class_li: 'slds-chat-listitem slds-chat-listitem_event',
+                            isEvent: true
+                        }
+                    ]
+                }
+                this.records[payload.Channel__c] = [
+                    ...this.records[payload.Channel__c],
                     {
                         id: payload.RecordId__c,
                         content: payload.Message__c,
-                        DateTime: payload.CreatedDate,
+                        DateTime: this.getTimeString(payload.CreatedDate),
                         class_li: 'slds-chat-listitem slds-chat-listitem_inbound',
-                        class_div: 'slds-chat-message__text slds-chat-message__text_inbound'
+                        class_div: 'slds-chat-message__text slds-chat-message__text_inbound',
+                        isEvent: false
                     }
                 ]
                 console.log('last element: ' + JSON.stringify(this.chat_records[-1]));
@@ -250,51 +340,50 @@ export default class Connectly extends LightningElement {
     }
     @track message = '';
     handleMessageChange(event) {
-        //console.log('handleMessageChange: ' + event.target.value);
         this.message = event.detail.value;
-        //console.log('this.message: ' + this.message);
     }
-    async sendMessage() {
+    async sendMessage(chnl) {
         console.log('sendMessage-> this.message: ' + this.message);
         if (this.message) {
-            const d = new Date();
-            console.log('d: ' + d);
-            //isMessageSuccess = false;
-            let i = '';
-            let commId = '';
+            let insertedRecordId = '';
+            let Date_time = this.getTimeString(new Date());
             await connect({
-                channel: 'chat', 
+                channel: chnl, 
                 sourceId: this.recordId,
                 content: this.message, 
                 Phone: '7894561230'
             })
                 .then(result => {
-                    commId = result;
-                    console.log('commId: ' + commId);
+                    insertedRecordId = result;
+                    console.log('insertedRecordId: ' + insertedRecordId);
+                    Date_time = Date_time+' • Sent';
                 })
                 .catch(error => {
                     console.log('error while connect: ' + error);
+                    insertedRecordId = new Date().toISOString();
+                    Date_time =Date_time+' • Failed';
                 })
-            
-            let Date_time = d.toISOString();
-            if (commId) {
-                i = commId;
-                //isMessageSuccess = true;
-                Date_time =Date_time+' • Sent';
-            } else {
-                i = d.toISOString();
-                Date_time =Date_time+' • Failed';
-            }
-            console.log('i: ' + i);
-            console.log('Date_time: ' + Date_time);
-            this.chat_records = [
-                ...this.chat_records,
+                if(!this.IsTodayEventAvailable(chnl)){
+                    this.records[chnl] = [
+                        ...this.records[chnl],
+                        {
+                            id: this.getDateString(new Date()),
+                            content: 'Today',
+                            DateTime: Date_time,
+                            class_li: 'slds-chat-listitem slds-chat-listitem_event',
+                            isEvent: true
+                        }
+                    ]
+                }
+            this.records[chnl] = [
+                ...this.records[chnl],
                 {
-                    id: i,
+                    id: insertedRecordId,
                     content: this.message,
                     DateTime: Date_time,
                     class_li: 'slds-chat-listitem slds-chat-listitem_outbound',
-                    class_div: 'slds-chat-message__text slds-chat-message__text_outbound'
+                    class_div: 'slds-chat-message__text slds-chat-message__text_outbound',
+                    isEvent: false
                 }
             ]
             this.message = '';
@@ -304,7 +393,36 @@ export default class Connectly extends LightningElement {
         //console.log('handleEnter: '+event.keyCode);
         console.log('handleEnter: '+event.target.value);
         console.log('hamdleEnter-> this.message: ' + this.message);
-        this.sendMessage();
+        this.sendMessage(event.target.name);
+    }
+    isAIinAction=false;
+    GenerateWithAI(event){
+        console.log(event);
+        console.log('generate with A method');
+        console.log('message->'+this.message);
+        
+        /*this.isAIinAction = true;
+        setTimeout(() => {
+            this.isAIinAction = false;
+        }, 2000);*/
+
+        if(this.message){
+            this.isAIinAction=true;
+            rephrase({message : this.message})
+            .then(result => {
+                if(result){
+                    console.log('result->'+result);
+                    this.message=result
+                }
+            })
+            .catch(error => {
+                console.log('error generating with AI'+error);
+            })
+            .finally(() => {
+                this.isAIinAction=false;
+            });
+            
+        }
     }
     onWhatsappClick() {
         const evt = new ShowToastEvent({

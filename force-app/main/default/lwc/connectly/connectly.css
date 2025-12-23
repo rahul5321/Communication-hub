@@ -57,3 +57,20 @@
     height: 58px;
     width: 37px;
 }
+.whatsapp-composer-body{
+    background-image: url('/resource/whatsappbackground');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 350px;
+    background-position: center;
+}
+.AI-Spinner{
+    position: absolute;
+    top: 64%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    /*z-index: 10;*/
+}
+.textarea-wrapper{
+    position : relative;
+}
