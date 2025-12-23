@@ -28,9 +28,6 @@ export default class Connectly extends LightningElement {
 
     communications;
 
-    @track chat_records = [];
-    @track whatsapp_records = [];
-
     @track records = {
         chat : [],
         whatsapp : []
@@ -88,8 +85,6 @@ export default class Connectly extends LightningElement {
     async get_details(channel) {
         try {
             this.communications = await get_details({ channel: channel, sourceId: this.recordId });
-
-            //const today = new Date();
             let datecounter;
             
             this.communications.forEach(element => {
@@ -124,7 +119,6 @@ export default class Connectly extends LightningElement {
                 });
                 
             });
-            //console.log('data fetched: '+datafetched);
             console.log('data added: ' + this.communications);
             console.log('chat_records: ' + JSON.stringify(this.records));
         } catch (error) {
@@ -195,7 +189,6 @@ export default class Connectly extends LightningElement {
         const name = event.target.name;
         if (name === 'chat' || name === 'whatsapp') {
             this.fetcha_details(event.target.name);
-            //console.log(this.chat_records);
         } else {
             this.changeChannel(event.target.name);
 
@@ -390,7 +383,6 @@ export default class Connectly extends LightningElement {
         }
     }
     handleSend(event) {
-        //console.log('handleEnter: '+event.keyCode);
         console.log('handleEnter: '+event.target.value);
         console.log('hamdleEnter-> this.message: ' + this.message);
         this.sendMessage(event.target.name);
