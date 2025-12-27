@@ -74,3 +74,7 @@
 .textarea-wrapper{
     position : relative;
 }
+.spinnerHolder{
+    position: relative;
+    display: inline-block;
+}

@@ -53,13 +53,13 @@ export default class Connectly extends LightningElement {
     }
     get headerTitle() {
         if (this.channelManagement.call) {
-            return 'Calling...';
+            return 'Voice call';
         }
         else if (this.channelManagement.email) {
             return 'New Email';
         }
         else if (this.channelManagement.chat) {
-            return 'Lets Chat';
+            return 'SMS';
         }else if (this.channelManagement.whatsapp) {
             return 'Whatsapp';
         }
@@ -280,7 +280,7 @@ export default class Connectly extends LightningElement {
             const payload = response.data.payload;
             console.log('payload: ' + JSON.stringify(payload));
             if (payload.SessionId__c == this.recordId) {
-                if(this.IsTodayEventAvailable(chnl)){
+                if(!this.IsTodayEventAvailable(payload.Channel__c)){
                     this.records[payload.Channel__c] = [
                         ...this.records[payload.Channel__c],
                         {
@@ -303,7 +303,7 @@ export default class Connectly extends LightningElement {
                         isEvent: false
                     }
                 ]
-                console.log('last element: ' + JSON.stringify(this.chat_records[-1]));
+                console.log('last element: ' + JSON.stringify(this.recordId[payload.Channel__c][-1]));
                 this.scrollToBottom();
             }
         }
